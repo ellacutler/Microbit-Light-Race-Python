@@ -3,6 +3,8 @@ import radio
 import speech
 import microbit
 import log
+import music
+
 run_count = 1
 count = 1
 SecondsTimer = 0
@@ -14,57 +16,57 @@ radio.config(channel=count)
 while True:
     if button_a.get_presses ==0:
         log.set_labels("StudentNumber", "Seconds")
-
-    if button_a.is_pressed():
+    print(str(val))
+    if val=="2" or val == "":
         # display.scroll("button pressed")
         firstLightVal = display.read_light_level()
         # count += 1
         # display.show(str(count))
         if count == 1:
-            display.show(firstLightVal)
+            display.scroll(firstLightVal)
 
         default_light_level_sender = display.read_light_level()
-        while display.read_light_level() > 0.8 * default_light_level_sender:
+        music.pitch(600)
+        sleep(200)
+        music.stop()
+        
+        while display.read_light_level() > 0.7 * default_light_level_sender:
             continue
         radio.send("1")
-        speech.say("go!")
+        #val = ""
+        music.pitch(900)
+        sleep(225)
+        music.stop() 
+        #speech.say("go", throat=125,speed=140,mouth=0,pitch=30)
+        #speech.say("stop", throat=120,speed=160,mouth=0,pitch=30)
         display.clear()
     # number shouldn't matter b/c everyone is on a different radio
     # speech.say("ready!")
 
     val = radio.receive()
+    print(str(radio.receive()))
+    print(str(val))
     if val == "1":
-        display.show("Hi")
+        display.scroll("Hi") # only activating after second light is hit?
         start_time = microbit.running_time()
-        default_light_levevl_reciever = display.read_light_level()
+        print("Start Time" + str(start_time))
+        default_light_level_reciever = display.read_light_level()
         elasped_seconds = 0
-        speech.say("go!")
-        while display.read_light_level() > default_light_level_reciever:
+        #speech.say("go!", throat=255,speed=100,mouth=200,pitch=125)
+        
+        while display.read_light_level() > 0.7 *default_light_level_reciever:
             continue
         run_count += 1
         end_time = microbit.running_time()
-        elasped_seconds = (end_time - start_time) / 1000
-        speech.say("done!")
-        speech.say(str(elasped_seconds))
-        display.show(elasped_seconds)
-        log.create_cv(StudentNumber=run_count, Seconds=elasped_seconds)  # records
-        val = ""
+        print("End Time" + str(end_time))
+        elasped_seconds = (end_time - start_time) / 100
+        music.pitch(900)
+        sleep(225)
+        music.stop() 
+        #speech.say("done!", throat=125,speed=140,mouth=0,pitch=30)
+        speech.say(str(elasped_seconds)+"Seconds")
+        
+        log.add({"StudentNumber":run_count, "Seconds":elasped_seconds})  # records
+        radio.send("2")
+        display.scroll(elasped_seconds)
 
-
-# input.on_button_pressed_a(Button.A, on_button_pressed_a)
-# still need datalogger
-# still need calibration w/ laser pointers
-
-# def on_forever():
-
-
-# basic.forever(on_forever)
-
-
-def on_received_number(recievedNumber, run_count):
-    pass
-
-    #
-
-
-radio.on_received_number(on_received_number, run_count)
