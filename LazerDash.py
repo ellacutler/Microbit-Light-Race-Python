@@ -17,6 +17,7 @@ while True:
     if button_a.get_presses ==0:
         log.set_labels("StudentNumber", "Seconds")
     if button_a.was_pressed():
+        # button a - first light sensor
         while True:
             firstLightVal = display.read_light_level()
             if count == 1:
@@ -36,6 +37,7 @@ while True:
     if button_b.was_pressed():
         
         print("button B")
+        # button b - second light sensor
         while(True):
             val = radio.receive()
             print(val)
